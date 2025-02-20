@@ -1,26 +1,32 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
+import './index.css'
 
-
-// Implementation of sentry/react
+//...
 import * as Sentry from "@sentry/react";
-import { BrowserTracing } from "@sentry/tracing";
+
 Sentry.init({
-  dsn: "https://d1de09eddd51af77801639fbbb1e9232@o4508852330561536.ingest.us.sentry.io/4508852332265472",
+  dsn: "https://d674932a77e6d9b9ced1190d70fd4691@o4506876178464768.ingest.us.sentry.io/4506876181151744",
   integrations: [
     Sentry.browserTracingIntegration(),
-    Sentry.replayIntegration(),
+    Sentry.browserProfilingIntegration(),
+    Sentry.reactRouterV6BrowserTracingIntegration({
+      useEffect: React.useEffect,
+    }),
+    Sentry.replayIntegration({
+      maskAllText: false,
+      blockAllMedia: false,
+    }),
   ],
-  // 
   tracesSampleRate: 1.0, 
   tracePropagationTargets: ["localhost", /^https:\/\/yourserver\.io\/api/],
-  replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
-  replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0, 
 });
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
     <App />
-  </StrictMode>,
+  </React.StrictMode>,
 )
